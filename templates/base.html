@@ -64,11 +64,11 @@
                                 <li>
                                     <hr class="dropdown-divider">
                                 </li>
-                                <li><a class="dropdown-item  text-white" href="{% url "user:logout %}">Выйти</a></li>
+                                <li><a class="dropdown-item  text-white" href="{% url "user:logout" %}">Выйти</a></li>
                             </ul>
                         </li>
                     </ul>
-                    <form class="d-flex" role="search" action="{% url "catalog:search" %} method="get>
+                    <form class="d-flex" role="search" action="{% url "catalog:search" %}" method="get">
                         <input class="form-control me-2" type="search" name="q" placeholder="Search" aria-label="Search">
                         <button class="btn btn-outline-success text-white" type="submit">Поиск</button>
                     </form>
@@ -179,7 +179,7 @@
                 <div class="col-lg-10">
                     <!-- Контент на странице -->
 
-
+                    {% include "includes/notifications.html" %}
                     {% block content %}{% endblock content %}
 
 
