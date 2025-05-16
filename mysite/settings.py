@@ -47,6 +47,8 @@ INSTALLED_APPS = [
     'main',
     'goods',
     'users',
+    'bot',
+    'carts',
 ]
 
 MIDDLEWARE = [
