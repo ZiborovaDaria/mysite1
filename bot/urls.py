@@ -4,5 +4,5 @@ from bot import views
 app_name='bot'
 
 urlpatterns = [
-    path('', views.startbot, name='startbot'),
+    # path('', views.startbot, name='startbot'),
 ]

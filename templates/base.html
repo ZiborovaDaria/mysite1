@@ -26,7 +26,7 @@
     <header>
         <nav class="navbar navbar-expand-lg bg-dark" data-bs-theme="dark">
             <div class="container">
-                <a class="navbar-brand" href="{% url "main:index" %}">Home</a>
+                <a class="navbar-brand" href="{% url "main:index" %}">ЕМЕХ-авто</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                     data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
                     aria-expanded="false" aria-label="Toggle navigation">
@@ -59,7 +59,7 @@
                                     Мой профиль
                                 </a>
                                 <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item  text-white" href="carts/cart.html">Корзина</a></li>
+                                    <li><a class="dropdown-item  text-white" href="{% url "users:users_cart" %}">Корзина</a></li>
                                     <li><a class="dropdown-item  text-white" href="{% url "user:profile" %} ">Личный кабинет</a>
                                     </li>
                                     {% if user.is_admin or user.is_staff %}
@@ -74,7 +74,7 @@
                         {% endif %}
                         <li>
                             <li class="nav-item">
-                                <a class="nav-link  text-white" href="{% url "bot:startbot" %}">Бот</a>
+                                {% comment %} <a class="nav-link  text-white" href="{% url "bot:startbot" %}">Бот</a> {% endcomment %}
                             </li>
                         </li>
                     </ul>
@@ -106,37 +106,7 @@
                     </ul>
                 </div>
                 <!-- Значек корзины, вызывает модальное окно -->
-                <div>
-                    <button type="button" class="btn btn-dark btn-secondary d-flex" id="modalButton"
-                        aria-expanded="false">
-                        <img class="mx-1" src="{% static "deps/icons/basket2-fill.svg" %}" alt="Catalog Icon" width="24"
-                            height="24">
-                        <span id="goods-in-cart-count">0</span>
-                    </button>
-                </div>
-                <!-- Разметка модального окна корзины -->
-                <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
-                    aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-scrollable">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                    aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                <h3 class="text-center mb-4">Корзина</h3>
-                                <div class="container" id="cart-items-container">
-                                    <!-- Разметка корзины -->
-                                    {% include "carts/includes/included_cart.html" %}
-                                    <!-- Закончилась разметка корзины -->
-                                </div>
-                                <a class="btn btn-dark" href="orders/create_order.html">
-                                    Оформить заказ
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                {% block modal_cart %}{% endblock  %}
                 <!-- Закончилась разметка модального окна -->
             </div>
         </div>
