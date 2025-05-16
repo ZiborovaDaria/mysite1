@@ -2,6 +2,7 @@
 {% load static %}
 {% load goods_tags %}
 
+
 {% block modal_cart %}
 {% include "includes/cart_button.html" %}
 {% endblock modal_cart %}
@@ -101,23 +102,17 @@
     <ul class="pagination justify-content-center my-4">
         <div class="custom-shadow d-flex">
             <li class="page-item {% if not goods.has_previous %}disabled{% endif %}">
-              <a class="page-link" href="{% if goods.has_previous %}?{% change_params page=goods.previous_page_number %}{% else %}
-              #
-              {% endif %}">Назад</a>
+              <a class="page-link" href="{% if goods.has_previous %}?{% change_params page=goods.previous_page_number %}{% else %}#{% endif %}">Назад</a>
             </li>
-
             {% for page in goods.paginator.page_range %}
-            {% if page >= goods.numbers|add:-2 and page <= goods.numbers|add:2 %}
-                <li class="page-item {% if goods.number == page %}active{% endif %}">
-                    <a class="page-link" href="?{% change_params page=page %} ">{{page}}</a>
-                </li>
-            {% endif %}
+                {% if page >= goods.number|add:-2 and page <= goods.number|add:2 %}
+                    <li class="page-item {% if goods.number == page %} active {% endif %}">
+                        <a class="page-link" href="?{% change_params page=page %}">{{page}}</a>
+                    </li>
+                {% endif %}
             {% endfor %}
-
             <li class="page-item {% if not goods.has_next %}disabled{% endif %}">
-              <a class="page-link" href="{% if goods.has_next %}?{% change_params page=goods.next_page_number %}{% else %}
-              #
-              {% endif %}">Вперед</a>
+              <a class="page-link" href="{% if goods.has_next %}?{% change_params page=goods.next_page_number %}{% else %}#{% endif %}">Вперед</a>
             </li>
         </div>
     </ul>
@@ -127,6 +122,7 @@
 
 
 {% block footer %}
+<link rel="stylesheet" href="{% static "deps/css/my_footer_css.css" %}">
 <footer class="py-4 bg-dark">
     <div class="container">
         <p class="m-0 text-center text-white">Copyright &copy; 2025</p>
