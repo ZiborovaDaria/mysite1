@@ -64,15 +64,15 @@
         <div class="col-lg-4 col-md-6 p-4">
             <div class="card border-primary rounded custom-shadow">
                 {% if product.image %}
-                    <img src="{{product.image.url}}" class="card-img-top" alt="{{product.name}}">
+                    <img src="{{product.image.url}}" class="card-img-top img-fluid" alt="{{product.name}}" style="max-height: 300px; object-fit: cover;">
                 {% else %}
-                    <img src="{% static "deps/images/Not found image.png" %}" class="card-img-top" alt="...">
+                    <img src="{% static "deps/images/Not found image.png" %}" class="card-img-top " alt="...">
                 {% endif %}
                 <div class="card-body">
                     <a href="{% url "catalog:product" product.slug %}">
                         <p class="card-title">{{ product.name }}</p>
                     </a>
-                    <p class="card-text">{{ product.description|truncatechars:35 }}</p>
+                    <p class="card-text">{{ product.description|truncatechars:25 }}</p>
                     <p class="product_id">id: {{product.display_id}}</p>
                     <div class="d-flex justify-content-between">
 
@@ -84,7 +84,9 @@
                             <p><strong>{{ product.price }} Руб.</strong></p>
                         {% endif %}
 
-                        <a href="{% url "carts:cart_add" product.slug %}" class="btn add-to-cart">
+                        <a href="{% url "cart:cart_add" %}" class="btn add-to-cart"
+                        data-product-id="{{ product.id }}">
+                            {% csrf_token %}
                             <img class="mx-1" src="{% static "deps/icons/cart-plus.svg" %}" alt="Catalog Icon"
                                 width="32" height="32">
                         </a>
