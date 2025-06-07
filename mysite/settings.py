@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 
-from django.conf.global_settings import  MEDIA_ROOT, MEDIA_URL
+from django.conf.global_settings import  DEFAULT_FROM_EMAIL, MEDIA_ROOT, MEDIA_URL
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -158,3 +158,14 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL='users.User'
 
 LOGIN_URL = '/user/login/'
+
+# Настройки email
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.yandex.ru'  # или другой SMTP-сервер
+EMAIL_PORT = 465
+EMAIL_USE_TLS = False
+EMAIL_USE_SSL = True
+EMAIL_HOST_USER = 'd.v.ziborova@yandex.ru'
+EMAIL_HOST_PASSWORD = 'ybbmupvivhvvmemg'
+DEFAULT_FROM_EMAIL='d.v.ziborova@yandex.ru'
+SERVER_EMAIL = 'd.v.ziborova@yandex.ru'

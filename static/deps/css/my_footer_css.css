@@ -1,7 +1,224 @@
-footer {
+body {
+    padding-top: 110px; /* Учитываем высоту шапки и панели инструментов */
+}
+
+main {
+    /* max-width: fit-content; Ограничим максимальную ширину для больших экранов */
+    margin: 0 auto; /* Центрируем контент */
+}
+
+.fixed-tools-container {
     position: fixed;
-    bottom: 0;
-    width: 100%;
-    background-color: #343a40;
-    padding: 10px 0;
-  }
+    top: 56px; /* Высота шапки */
+    left: 0;
+    right: 0;
+    z-index: 1020;
+}
+
+/* Стили для кнопки корзины */
+#modalButton {
+    padding: 5px 12px;
+    align-items: center;
+}
+
+#goods-in-cart-count {
+    margin-left: 5px;
+}
+
+/* Стили для многоуровневого меню */
+
+.dropdown-submenu {
+    position: relative;
+}
+
+.dropdown-submenu .dropdown-menu {
+    top: 0;
+    left: 100%;
+    margin-top: -6px;
+    margin-left: -1px;
+    display: none;
+}
+
+.dropdown-submenu:hover .dropdown-menu {
+    display: block;
+}
+
+.dropdown-submenu .dropdown-toggle::after {
+    display: inline-block;
+    margin-left: 0.255em;
+    vertical-align: 0.255em;
+    content: "";
+    border-top: 0.3em solid;
+    border-right: 0.3em solid transparent;
+    border-bottom: 0;
+    border-left: 0.3em solid transparent;
+    float: right;
+    margin-top: 0.5em;
+}
+
+
+footer {
+  bottom: 0;
+  width: 100%;
+  background-color: #343a40;
+  padding: 10px 0;
+  color: white; /* Основной цвет текста белый */
+  position: absolute;
+}
+
+footer a {
+    color: #ffcc00;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+footer .text-muted {
+    color: #adb5bd !important;
+}
+
+/* Стили для иконок соцсетей */
+footer .social-links a {
+    color: white;
+    margin-right: 15px;
+    display: inline-block;
+    transition: all 0.3s ease;
+}
+
+footer .social-links a:hover {
+    color: #ffcc00;
+    transform: scale(1.1);
+}
+
+.bi-vk {
+    position: relative;
+}
+
+.bi-vk::before {
+    content: "";
+    display: inline-block;
+    width: 28px;
+    height: 28px;
+    background-image: url('../icons/icons8-vk-в-круге-64.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+
+footer hr {
+    border-color: #6c757d;
+}
+
+/* Для всех иконок */
+footer .bi {
+    vertical-align: middle;
+    font-size: 1.5rem;
+}
+
+/* Фиксированный телеграм-бот */
+.telegram-fixed {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    z-index: 1000;
+}
+.telegram-btn {
+    background-color: #0088cc;
+    color: white;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    transition: all 0.3s;
+}
+.telegram-btn:hover {
+    background-color: #0077b3;
+    transform: scale(1.1);
+    color: white;
+}
+.telegram-tooltip {
+    position: absolute;
+    right: 70px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: #333;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+}
+.telegram-btn:hover .telegram-tooltip {
+    opacity: 1;
+}
+
+/* Стили для карусели акций */
+#mainCarousel {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.carousel-inner {
+    max-height: 500px;
+}
+
+.carousel-item img {
+    object-fit: cover;
+    height: 500px;
+}
+
+.carousel-caption {
+    bottom: 3rem;
+    left: 10%;
+    right: 10%;
+    padding: 2rem;
+}
+
+.carousel-control-prev,
+.carousel-control-next {
+    width: 5%;
+}
+
+.carousel-indicators button {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin: 0 5px;
+}
+
+.about-section {
+    margin-bottom: 3rem;
+    padding: 2rem 0;
+}
+
+/* Список преимуществ */
+.advantage-list {
+    font-size: 1.1rem;
+}
+
+.advantage-item {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #eee;
+}
+
+/* Карточки магазинов */
+.store-card {
+    transition: transform 0.3s ease;
+    height: 100%;
+}
+
+.store-card:hover {
+    transform: translateY(-5px);
+}
+
+/* Иконки контактов */
+.contact-icon {
+    color: #0d6efd;
+    margin-right: 0.5rem;
+}
+    

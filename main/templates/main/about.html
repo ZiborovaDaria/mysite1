@@ -10,9 +10,129 @@
 {% endblock modal_cart %}
 
 {% block content %}
-<div>
-    <h2 class="mt-5 pt-5"><strong>{{ content }}</strong></h2>
-    <p>{{text_on_page}}</p>
+<div class="container-fluid px-0">
+
+    <!-- Основной контент -->
+    <div class="container py-5">
+        <!-- О компании -->
+        <section class="mb-5">
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+                    <h1 class="mb-4 text-center">О компании</h1>
+                    <div class="about-content text-center">
+                        {{ text_on_page.description|safe }}
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Преимущества -->
+        <section class="mb-5 py-4 ">
+            <div class="container">
+                <h2 class="mb-4 text-center">Наши преимущества</h2>
+                <div class="row">
+                    <div class="col-lg-6">
+                        <ul class="list-unstyled advantage-list">
+                            {% for advantage in text_on_page.advantages %}
+                            <li class="advantage-item mb-3">
+                                <i class="bi bi-check-circle-fill text-primary me-2"></i>
+                                {{ advantage }}
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="p-4 rounded h-100">
+                            <h4 class="text-center mb-3">Наша миссия</h4>
+                            <p class="mb-0 text-center">{{ text_on_page.mission }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Магазины -->
+        <section class="mb-5">
+            <h2 class="mb-4 text-center">Наши магазины</h2>
+            <div class="row">
+                {% for store in stores %}
+                <div class="col-xl-3 col-lg-4 col-md-6 mb-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title text-center">
+                                <i class="bi bi-shop"></i> {{ store.city }}
+                            </h5>
+                            <div class="store-info">
+                                <p class="mb-2">
+                                    <i class="bi bi-geo-alt-fill text-primary"></i> 
+                                    {{ store.address }}
+                                </p>
+                                <p class="mb-2">
+                                    <i class="bi bi-telephone-fill text-primary"></i> 
+                                    {{ store.phone }}
+                                </p>
+                                <p class="mb-3">
+                                    <i class="bi bi-clock-fill text-primary"></i> 
+                                    {{ store.opening_hours }}
+                                </p>
+                            </div>
+                            <div class="text-center">
+                                <a href="{{ store.get_map_url }}" 
+                                   target="_blank" 
+                                   class="btn btn-outline-primary">
+                                    Посмотреть на карте
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+
+        <!-- Контакты -->
+        <section class="py-4">
+            <div class="container">
+                <h2 class="mb-4 text-center">Контактная информация</h2>
+                <div class="row justify-content-center">
+                    <div class="col-lg-8">
+                        <div class="row">
+                            {% for contact in contacts %}
+                            <div class="col-md-6 mb-3">
+                                <div class="p-3 bg-white rounded shadow-sm h-100">
+                                    <h5 class="text-center mb-3">
+                                        <i class="bi {{ contact.icon|default:'bi-info-circle' }}"></i> 
+                                        {{ contact.get_contact_type_display }}
+                                        {% if contact.is_main %}<small class="text-muted">(основной)</small>{% endif %}
+                                    </h5>
+                                    <p class="text-center mb-1">
+                                        <i class="bi 
+                                            {% if contact.contact_type == 'EMAIL' %}bi-envelope
+                                            {% elif contact.contact_type == 'PHONE' %}bi-telephone
+                                            {% elif contact.contact_type == 'ADDRESS' %}bi-geo-alt
+                                            {% elif contact.contact_type == 'SOCIAL' %}bi-share
+                                            {% else %}bi-info-circle{% endif %} 
+                                            text-primary"></i> 
+                                        {{ contact.value }}
+                                    </p>
+                                    {% if contact.description %}
+                                    <p class="text-center text-muted small mb-0">
+                                        {{ contact.description }}
+                                    </p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% if forloop.counter|divisibleby:2 and not forloop.last %}
+                        </div>
+                        <div class="row">
+                            {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
 </div>
 {% endblock content %}
 

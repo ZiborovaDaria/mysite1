@@ -1,10 +1,13 @@
 from django.contrib import admin
 
-from goods.models import Categories,Products
+from goods.models import Categories, Country, Manufacturer,Products, SubCategories
 
-# admin.site.register(Categories)
-# admin.site.register(Products)
+admin.site.register(Manufacturer)
+admin.site.register(Country)
 
+@admin.register(SubCategories)
+class SubCategoriesAdmin(admin.ModelAdmin):
+    prepopulated_fields={'slug':('name',)}
 
 @admin.register(Categories)
 class CategoriesAdmin(admin.ModelAdmin):

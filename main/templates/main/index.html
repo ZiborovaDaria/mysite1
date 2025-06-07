@@ -10,13 +10,103 @@
 {% endblock modal_cart %}
 
 {% block content %}
-<h1 class="mt-5 pt-5"><strong>{{ content }}</strong></h1>
+<h1 class="py-5 text-center"><strong>{{ content }}</strong></h1>
+<!-- Главный слайдер с акциями -->
+<div id="mainCarousel" class="carousel slide mb-5" data-bs-ride="carousel">
+    <div class="carousel-indicators">
+        <button type="button" data-bs-target="#mainCarousel" data-bs-slide-to="0" class="active"></button>
+        <button type="button" data-bs-target="#mainCarousel" data-bs-slide-to="1"></button>
+        <button type="button" data-bs-target="#mainCarousel" data-bs-slide-to="2"></button>
+    </div>
+    <div class="carousel-inner rounded">
+        {% for promotion in promotions %}
+        <div class="carousel-item {% if forloop.first %}active{% endif %}">
+            <img src="{{ promotion.image.url }}" class="d-block w-100" alt="{{ promotion.title }}">
+            <div class="carousel-caption d-none d-md-block bg-dark bg-opacity-50 rounded">
+                <h5>{{ promotion.title }}</h5>
+                <p>{{ promotion.description }}</p>
+                <a href="{{ promotion.link }}" class="btn btn-warning">Подробнее</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#mainCarousel" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon"></span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#mainCarousel" data-bs-slide="next">
+        <span class="carousel-control-next-icon"></span>
+    </button>
+</div>
+
+<!-- Преимущества магазина -->
+<div class="row mb-5 g-4">
+    <div class="col-md-3">
+        <div class="card h-100 border-0 shadow-sm text-center p-3">
+            <div class="card-body">
+                <i class="bi bi-truck fs-1 text-primary"></i>
+                <h5 class="card-title mt-3">Быстрая доставка</h5>
+                <p class="card-text">Доставка по всей России от 1 дня</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card h-100 border-0 shadow-sm text-center p-3">
+            <div class="card-body">
+                <i class="bi bi-shield-check fs-1 text-primary"></i>
+                <h5 class="card-title mt-3">Гарантия качества</h5>
+                <p class="card-text">Только оригинальные запчасти</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card h-100 border-0 shadow-sm text-center p-3">
+            <div class="card-body">
+                <i class="bi bi-currency-exchange fs-1 text-primary"></i>
+                <h5 class="card-title mt-3">Выгодные цены</h5>
+                <p class="card-text">Цены ниже рыночных на 10-15%</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card h-100 border-0 shadow-sm text-center p-3">
+            <div class="card-body">
+                <i class="bi bi-headset fs-1 text-primary"></i>
+                <h5 class="card-title mt-3">Поддержка 24/7</h5>
+                <p class="card-text">Консультации по подбору запчастей</p>
+            </div>
+        </div>
+    </div>
+</div>
+
 {% endblock content %}
 
 {% block footer %}
 <footer class="py-4 bg-dark">
     <div class="container">
-        <p class="m-0 text-center text-white">Copyright &copy; 2025</p>
+        <div class="row">
+            <div class="col-md-4">
+                <h5 class="text-white">ЕМЕХ-авто</h5>
+                <p class="text-muted">Интернет-магазин автозапчастей с доставкой по всей России</p>
+            </div>
+            <div class="col-md-4">
+                <h5 class="text-white">Контакты</h5>
+                <ul class="list-unstyled text-muted">
+                    <li><i class="bi bi-telephone me-2"></i> +7 (123) 456-78-90</li>
+                    <li><i class="bi bi-envelope me-2"></i> info@emex-auto.ru</li>
+                    <li><i class="bi bi-geo-alt me-2"></i> г. Москва, ул. Автозапчастей, 15</li>
+                </ul>
+            </div>
+            <div class="col-md-4">
+                <h5 class="text-white">Мы в соцсетях</h5>
+                <div class="social-links">
+                    <a href="#" class="text-white me-3"><i class="bi bi-telegram fs-4"></i></a>
+                    <a href="#" class="text-white me-3"><i class="bi bi-whatsapp fs-4"></i></a>
+                    <a href="#" class="text-white me-3"><i class="bi bi-vk fs-4"></i></a>
+                </div>
+            </div>
+        </div>
+        <hr class="my-4 bg-secondary">
+        <p class="m-0 text-center text-white">Copyright &copy; 2025 ЕМЕХ-авто. Все права защищены.</p>
     </div>
 </footer>
 {% endblock %}
