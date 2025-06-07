@@ -25,6 +25,7 @@ class OrderItemAdmin(admin.ModelAdmin):
 class OrderTabulareAdmin(admin.TabularInline):
     model = Order
     fields = (
+        
         "requires_delivery",
         "status",
         "payment_on_get",

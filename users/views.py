@@ -43,23 +43,23 @@ def login(request):
 
 def registration(request):
 
-    if request.method  == 'POST':
-        form=UserRegistrationForm(data=request.POST)
+    if request.method == 'POST':
+        form = UserRegistrationForm(data=request.POST)
         if form.is_valid():
             form.save()
 
-            session_key=request.session.session_key
+            session_key = request.session.session_key
 
-            user=form.instance
+            user = form.instance
             auth.login(request, user)
 
             if session_key:
-                Cart.odject.filter(session_key=session_key).update(user=user)
-
-            messages.success(request, f"{user.username}, Вы успешно зарегистрированы и  вошли в аккаунт")
+                Cart.objects.filter(session_key=session_key).update(user=user)
+                
+            messages.success(request, f"{user.username}, Вы успешно зарегистрированы и вошли в аккаунт")
             return HttpResponseRedirect(reverse('main:index'))
     else:
-        form=UserRegistrationForm()
+        form = UserRegistrationForm()
 
     context = {
         'title': 'ЕМЕХ-авто - Регистрация',
