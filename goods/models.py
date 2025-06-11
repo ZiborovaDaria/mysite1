@@ -65,6 +65,7 @@ class Products(models.Model):
     manufacturer = models.ForeignKey(Manufacturer, on_delete=models.SET_NULL, null=True)
     country = models.ForeignKey(Country, on_delete=models.SET_NULL, null=True)
     views = models.PositiveIntegerField(default=0)  # для сортировки по популярности
+    subcategory = models.ForeignKey(SubCategories, on_delete=models.SET_NULL, null=True,blank=True,verbose_name='Подкатегория')
 
     class Meta:
         db_table='product'

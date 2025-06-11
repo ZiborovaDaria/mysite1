@@ -21,4 +21,6 @@ class ProductsAdmin(admin.ModelAdmin):
     list_editable=['discount',]
     search_fields=['name','description']
     list_filter=['quantity','category','discount']
-    fields=['name','category','slug','description','image','quantity',('price','discount'),]
+    fields=['name','category','subcategory','slug','manufacturer',
+            'country','description','image','quantity',('price','discount'),'views',]
+    readonly_fields=['views']

@@ -24,10 +24,8 @@
                 <div class="mb-3">
                     <label class="form-label">Категория</label>
                     <select class="form-select form-select-sm" name="category" id="category-select" onchange="updateCategory()">
-                        <option value="">Все категории</option>
                         {% for cat in categories %}
-                            <option value="{{ cat.slug }}" 
-                                {% if cat.slug == category_slug %}selected{% endif %}>
+                            <option value="{{ cat.slug }}" {% if cat.slug == category_slug %}selected{% endif %}>
                                 {{ cat.name }}
                             </option>
                         {% endfor %}
@@ -137,14 +135,16 @@
         <nav aria-label="breadcrumb" class="mb-4">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="{% url 'main:index' %}">Главная</a></li>
-                <li class="breadcrumb-item"><a href="{% url 'goods:catalog' 'all' %}">Каталог</a></li>
-                {% if subcategory %}
-                    <li class="breadcrumb-item"><a href="{% url 'goods:catalog' category.slug %}">{{ category.name }}</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">{{ subcategory.name }}</li>
-                {% elif category %}
-                    <li class="breadcrumb-item active" aria-current="page">{{ category.name }}</li>
+                {% if category or subcategory %}
+                    <li class="breadcrumb-item"><a href="{% url 'goods:index' %}">Каталог</a></li>
+                    {% if subcategory %}
+                        <li class="breadcrumb-item"><a href="{% url 'goods:catalog' category.slug %}">{{ category.name }}</a></li>
+                        <li class="breadcrumb-item active">{{ subcategory.name }}</li>
+                    {% elif category %}
+                        <li class="breadcrumb-item active">{{ category.name }}</li>
+                    {% endif %}
                 {% else %}
-                    <li class="breadcrumb-item active" aria-current="page">Все товары</li>
+                    <li class="breadcrumb-item active">Каталог</li>
                 {% endif %}
             </ol>
         </nav>
@@ -182,6 +182,7 @@
                                 </div>
                                 
                                 <a href="{% url 'cart:cart_add' %}" class="btn btn-sm btn-outline-dark add-to-cart" data-product-id="{{ product.id }}">
+                                    {% csrf_token %}
                                     <img src="{% static 'deps/icons/cart-plus.svg' %}" alt="Добавить в корзину" width="20" height="20">
                                 </a>
                             </div>
@@ -244,8 +245,6 @@ function updateCategory() {
     const categorySlug = categorySelect.value;
     if (categorySlug) {
         window.location.href = `/catalog/${categorySlug}/`;
-    } else {
-        window.location.href = "{% url 'goods:catalog' 'all' %}";
     }
 }
 
@@ -265,7 +264,7 @@ function updateSubcategory() {
 
 {% block footer %}
 <link rel="stylesheet" href="{% static "deps/css/my_footer_css.css" %}">
-<footer class="py-4 bg-dark">
+<footer class="py-4 bg-dark footer-catalog">
     <div class="container">
         <p class="m-0 text-center text-white">Copyright &copy; 2025 ЕМЕХ-авто. Все права защищены.</p>
     </div>

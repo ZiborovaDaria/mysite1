@@ -1,11 +1,20 @@
 {% load static %}
+{% load widget_tweaks %}
 
+<!-- Обработка ошибок формы -->
 {% if form.non_field_errors %}
-<div class="container mt-4">
+<div class="container mt-3">
     <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="alert alert-danger alert-dismissible fade show custom-shadow" role="alert">
-                {{form.non_field_errors}}
+        <div class="col-lg-8">
+            <div class="alert alert-danger alert-dismissible fade show rounded-3 shadow-sm" role="alert" style="margin-top: 70px;">
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-exclamation-circle me-2"></i>
+                    <div>
+                        {% for error in form.non_field_errors %}
+                            <p class="mb-0">{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                </div>
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         </div>
@@ -13,26 +22,102 @@
 </div>
 {% endif %}
 
-<div class="container mt-4">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            {% if messages %}
-                {% for message in messages %}
-                    {% if message.tags == 'success' %}
-                    <div id="notification" class="position-fixed start-50 translate-middle-x z-3 alert alert-success fade show custom-shadow" role="alert">
-                        {{ message }}
+<!-- Уведомления -->
+<div class="notification-container" style="top: 70px;">
+    {% if messages %}
+        {% for message in messages %}
+            <div id="notification" class="position-fixed start-50 translate-middle-x z-3 alert alert-{{ message.tags }} fade show rounded-3 shadow-sm" role="alert" style="top: 70px; min-width: 300px; max-width: 90%;">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-center">
+                        {% if message.tags == 'success' %}
+                            <i class="fas fa-check-circle me-2"></i>
+                        {% elif message.tags == 'warning' %}
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                        {% endif %}
+                        <span>{{ message }}</span>
                     </div>
-                    {% endif %}
-                    {% if message.tags == 'warning' %}
-                    <div id="notification" class="position-fixed start-50 translate-middle-x z-3 alert alert-danger fade show custom-shadow" role="alert">
-                        {{ message }}
-                    </div>
-                    {% endif %}
-                {% endfor %}
-            {% else %}
-            <div id="jq-notification" class="position-fixed start-50 translate-middle-x z-3 alert alert-success fade show custom-shadow" style="display: none;" role="alert">
+                    <button type="button" class="btn-close ms-3" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
             </div>
-            {% endif %}
+        {% endfor %}
+    {% else %}
+        <div id="jq-notification" class="position-fixed start-50 translate-middle-x z-3 alert alert-success fade show rounded-3 shadow-sm" style="display: none; top: 70px; min-width: 300px; max-width: 90%;" role="alert">
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-check-circle me-2"></i>
+                    <span class="notification-message"></span>
+                </div>
+                <button type="button" class="btn-close ms-3" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
         </div>
-    </div>
+    {% endif %}
 </div>
+
+<style>
+    .notification-container {
+        position: relative;
+        z-index: 1100;
+    }
+    
+    /* Остальные стили остаются без изменений */
+    .form-control, .form-select {
+        border-radius: 8px;
+        padding: 10px 15px;
+        border: 1px solid #e0e0e0;
+        transition: all 0.3s;
+    }
+    
+    .form-control:focus, .form-select:focus {
+        border-color: #86b7fe;
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+    }
+    
+    .form-label {
+        font-weight: 500;
+        margin-bottom: 8px;
+        color: #495057;
+    }
+    
+    .btn-submit {
+        background-color: #0d6efd;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-weight: 500;
+        transition: all 0.3s;
+    }
+    
+    .btn-submit:hover {
+        background-color: #0b5ed7;
+        transform: translateY(-1px);
+    }
+    
+    .invalid-feedback {
+        font-size: 0.85rem;
+        margin-top: 5px;
+    }
+    
+    .is-invalid {
+        border-color: #dc3545 !important;
+    }
+    
+    .is-valid {
+        border-color: #198754 !important;
+    }
+</style>
+
+<script>
+$(document).ready(function() {
+    // Автоматическое скрытие уведомлений через 5 секунд
+    setTimeout(function() {
+        $('.alert').alert('close');
+    }, 5000);
+    
+    // Закрытие по клику вне уведомления
+    $(document).click(function(e) {
+        if (!$(e.target).closest('.alert').length) {
+            $('.alert').alert('close');
+        }
+    });
+});
+</script>

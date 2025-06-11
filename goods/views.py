@@ -15,14 +15,14 @@ def catalog(request, category_slug=None, subcategory_slug=None):
     category = None
     subcategory = None
 
-    # Фильтрация по категории/подкатегории
-    if category_slug == 'all':
-        pass
-    elif subcategory_slug:
+    # Фильтрация по подкатегории
+    if subcategory_slug:
         subcategory = get_object_or_404(SubCategories, slug=subcategory_slug)
-        goods = goods.filter(category=subcategory.category)
-        category_slug = subcategory.category.slug
-    elif category_slug:
+        goods = goods.filter(subcategory=subcategory)
+        category = subcategory.category
+        category_slug = category.slug
+    # Фильтрация по категории
+    elif category_slug and category_slug != 'all':
         category = get_object_or_404(Categories, slug=category_slug)
         goods = goods.filter(category=category)
     
@@ -70,10 +70,17 @@ def catalog(request, category_slug=None, subcategory_slug=None):
     return render(request, 'goods/catalog.html', context)
 
 def product(request, product_slug):
-
-    product=Products.objects.get(slug=product_slug)
-
+    product = get_object_or_404(Products, slug=product_slug)
+    product.views += 1
+    product.save()
+    
+    # Получаем похожие товары из той же категории, исключая текущий товар
+    similar_products = Products.objects.filter(
+        category=product.category
+    ).exclude(id=product.id).order_by('?')[:4]  # 4 случайных товара
+    
     context = {
-        'product': product
-        }
-    return render(request, 'goods/product.html',context)
+        'product': product,
+        'similar_products': similar_products,
+    }
+    return render(request, 'goods/product.html', context)

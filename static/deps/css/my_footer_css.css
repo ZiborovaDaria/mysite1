@@ -5,11 +5,12 @@ body {
 main {
     /* max-width: fit-content; Ограничим максимальную ширину для больших экранов */
     margin: 0 auto; /* Центрируем контент */
+    padding-bottom: 90px;
 }
 
 .fixed-tools-container {
     position: fixed;
-    top: 56px; /* Высота шапки */
+    top: 60px; /* Высота шапки */
     left: 0;
     right: 0;
     z-index: 1020;
@@ -58,13 +59,24 @@ main {
 
 
 footer {
-  bottom: 0;
-  width: 100%;
-  background-color: #343a40;
-  padding: 10px 0;
-  color: white; /* Основной цвет текста белый */
+    position: fixed; /* Подвал как приклеенный */
+    bottom: 0; /* Фиксация снизу */
+    left: 0; /* К началу слева */
+    right: 0; /* Без отступов справа */
+    width: 100%;
+    background-color: #343a40;
+    padding: 10px 0;
+    color: white; /* Основной цвет текста белый */
+}
+
+.footer-index{
   position: absolute;
 }
+
+/* .footer-catalog{
+  position: relative;
+} */
+
 
 footer a {
     color: #ffcc00;
@@ -222,3 +234,35 @@ footer .bi {
     margin-right: 0.5rem;
 }
     
+
+/* Вид сообщение об ошибках */
+.alert-messages {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    min-width: 300px;
+}
+
+.alert {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border: none;
+    border-radius: 8px;
+}
+
+.alert-danger {
+    background-color: #ffebee;
+    color: #c62828;
+    border-left: 4px solid #c62828;
+}
+
+.alert-success {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+    border-left: 4px solid #2e7d32;
+}
+
+.invalid-feedback {
+    color: #c62828;
+    font-size: 0.875em;
+}

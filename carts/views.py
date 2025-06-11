@@ -1,16 +1,23 @@
 from django.http import JsonResponse
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import render_to_string
 
 from carts.models import Cart
 from carts.utils import get_user_carts
 from goods.models import Products
 
-def cart_add(request):
+def cart_add(request, product_slug=None):
 
     product_id = request.POST.get("product_id")
 
     product = Products.objects.get(id=product_id)
+    
+    # Поддержка обоих вариантов - по ID и по slug
+    if product_slug:
+        product = get_object_or_404(Products, slug=product_slug)
+    else:
+        product_id = request.POST.get("product_id")
+        product = get_object_or_404(Products, id=product_id)
     
     if request.user.is_authenticated:
         carts = Cart.objects.filter(user=request.user, product=product)

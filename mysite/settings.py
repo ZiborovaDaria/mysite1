@@ -43,6 +43,8 @@ INSTALLED_APPS = [
     'django.contrib.postgres',
 
     'debug_toolbar',
+    'mathfilters',
+    'widget_tweaks',
 
     'main',
     'goods',
@@ -83,7 +85,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'mysite.wsgi.application'
-
+ROOT_URLCONF = 'mysite.urls'
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
@@ -169,3 +171,8 @@ EMAIL_HOST_USER = 'd.v.ziborova@yandex.ru'
 EMAIL_HOST_PASSWORD = 'ybbmupvivhvvmemg'
 DEFAULT_FROM_EMAIL='d.v.ziborova@yandex.ru'
 SERVER_EMAIL = 'd.v.ziborova@yandex.ru'
+
+
+# Telegram
+TELEGRAM_BOT_TOKEN = "7042570168:AAHxnGmR1YIyaYglS6yCB__j8FbdYtrtoYs"
+TELEGRAM_OPERATOR_CHAT_ID = "dvziborova"  # Чат ID оператора

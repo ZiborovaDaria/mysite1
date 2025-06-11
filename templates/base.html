@@ -87,17 +87,17 @@
         </nav>
     </header>
 
+    
     <div class="fixed-tools-container">
         <div class="container">
             <div class="d-flex align-items-center py-2">
                 <!-- Каталог с подкатегориями -->
                 <div class="dropdown me-3">
-                    <button class="btn btn-secondary dropdown-toggle btn-dark" type="button" 
-                            data-bs-toggle="dropdown" aria-expanded="false">
-                        <img class="mx-1" src="{% static "deps/icons/grid-fill.svg" %}" alt="Catalog Icon" width="16" height="16">
+                    <a href="{% url 'goods:catalog' 'all' %}" class="btn btn-secondary btn-dark">
+                        <img class="mx-1" src="{% static 'deps/icons/grid-fill.svg' %}" alt="Catalog Icon" width="16" height="16">
                         Каталог
-                    </button>
-                    <ul class="dropdown-menu bg-dark dropdown-menu-dark">
+                    </a>
+                    {% comment %} <ul class="dropdown-menu bg-dark dropdown-menu-dark">
                         {% tag_categories as categories %}
                         {% for category in categories %}
                             {% if category.subcategories.all %}
@@ -124,7 +124,7 @@
                                 </li>
                             {% endif %}
                         {% endfor %}
-                    </ul>
+                    </ul> {% endcomment %}
                 </div>
                 <!-- Значек корзины -->
                 {% block modal_cart %}{% endblock %}

@@ -1,22 +1,127 @@
 {% extends "base.html" %}
 {% load static %}
 {% load carts_tags %}
-
+{% load mathfilters %}
 
 {% block content %}
 {% user_carts request as carts %}
 <div class="row">
-    <div class="container mt-5">
+    <div class="container mt-4">
         <div class="row justify-content-center">
-            <div class=" bg-white p-4 mb-4 mx-2 rounded custom-shadow">
-                <h3 class="text-center mb-4">Корзина</h3>
+            <!-- Основной блок корзины -->
+            <div class="col-lg-8 bg-white p-4 mb-4 rounded shadow-sm" style="border: 1px solid rgba(0,0,0,0.05);">
+                <h3 class="text-center mb-4" style="color: #2c3e50; font-weight: 600;">Корзина</h3>
                 <div class="container" id="cart-items-container">
-                    <!-- Разметка корзины -->
                     {% include "carts/includes/included_cart.html" %}
-                    <!-- Закончилась разметка корзины -->
                 </div>
+            </div>
+
+            <!-- Блок дополнительных предложений -->
+            <div class="col-lg-8">
+                {% if carts %}
+                <!-- 1. Рекомендуемые товары (из похожих товаров из категорий в корзине) -->
+                <div class="bg-white p-4 mb-3 rounded shadow-sm">
+                    <h5 class="mb-3" style="color: #2c3e50;">С этим товаром покупают</h5>
+                    <div class="row">
+                        {% for product in similar_products %}
+                        <div class="col-md-3 col-6 mb-2">
+                            <div class="card h-100 border-0">
+                                {% if product.image %}
+                                <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}" style="height: 120px; object-fit: contain;">
+                                {% else %}
+                                <img src="{% static 'deps/images/no-image.png' %}" class="card-img-top" alt="No image" style="height: 120px; object-fit: contain;">
+                                {% endif %}
+                                <div class="card-body p-2">
+                                    <h6 class="card-title">{{ product.name|truncatechars:30 }}</h6>
+                                    <p class="text-muted small">{{ product.sell_price }} ₽</p>
+                                    <button class="btn btn-sm btn-outline-primary w-100 add-to-cart" 
+                                            data-product-id="{{ product.id }}">
+                                        Добавить
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- 2. Акции и спецпредложения -->
+                <div class="bg-white p-4 mb-3 rounded shadow-sm">
+                    <h5 class="mb-3" style="color: #2c3e50;">Специальные предложения</h5>
+                    {% if carts.total_price < 5000 %}
+                    <div class="alert alert-info py-2">
+                        <i class="fas fa-shipping-fast mr-2"></i> 
+                        Бесплатная доставка при заказе от 5 000 ₽ (осталось {{ 5000|sub:carts.total_price }} ₽)
+                    </div>
+                    {% endif %}
+                    {% if carts.total_quantity < 3 %}
+                    <div class="alert alert-warning py-2">
+                        <i class="fas fa-percentage mr-2"></i> 
+                        Добавьте еще {{ 3|sub:carts.total_quantity }} товара и получите скидку 10% на весь заказ!
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- 3. Дополнительные услуги -->
+                <div class="bg-white p-4 mb-3 rounded shadow-sm">
+                    <h5 class="mb-3" style="color: #2c3e50;">Дополнительные услуги</h5>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" id="gift-wrap">
+                        <label class="form-check-label" for="gift-wrap">
+                            Подарочная упаковка (+350 ₽)
+                        </label>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" id="express-delivery">
+                        <label class="form-check-label" for="express-delivery">
+                            Экспресс-доставка (+500 ₽)
+                        </label>
+                    </div>
+                </div>
+
+                <!-- 4. Промокод -->
+                <div class="bg-white p-4 rounded shadow-sm">
+                    <h5 class="mb-3" style="color: #2c3e50;">Есть промокод?</h5>
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Введите промокод" id="promo-code">
+                        <div class="input-group-append">
+                            <button class="btn btn-primary" type="button" id="apply-promo">Применить</button>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
             </div>
         </div>
     </div>
 </div>
+
+<script>
+$(document).ready(function() {
+    // Обработка добавления товара из блока рекомендаций
+    $('.add-to-cart').click(function() {
+        const productId = $(this).data('product-id');
+        $.ajax({
+            url: '{% url "cart:cart_add" %}',
+            type: 'POST',
+            data: {
+                'product_id': productId,
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
+            },
+            success: function(response) {
+                $('#cart-items-container').html(response.cart_items_html);
+                toastr.success(response.message);
+            }
+        });
+    });
+    
+    // Обработка промокода
+    $('#apply-promo').click(function() {
+        const promoCode = $('#promo-code').val();
+        if (promoCode) {
+            // Здесь должна быть логика проверки промокода
+            toastr.info('Промокод применяется...');
+        }
+    });
+});
+</script>
 {% endblock content %}

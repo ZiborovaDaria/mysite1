@@ -15,18 +15,74 @@
     aria-hidden="true">
     <div class="modal-dialog modal-dialog-scrollable">
         <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                    aria-label="Close"></button>
+            <div class="modal-header bg-dark text-white">
+                <h5 class="modal-title" id="cartModalLabel">
+                    <img class="me-2" src="{% static "deps/icons/basket2-fill.svg" %}" alt="Cart Icon" width="24" height="24">
+                    Ваша корзина
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <h3 class="text-center mb-4">Корзина</h3>
                 <div class="container" id="cart-items-container">
-                    <!-- Разметка корзины -->
-                    {% include "carts\includes\included_cart.html" %}
-                    <!-- Закончилась разметка корзины -->
+                    {% if carts %}
+                        {% include "carts/includes/included_cart.html" %}
+                    {% else %}
+                        <div class="text-center py-4">
+                            <img src="{% static 'deps/icons/cart-x.svg' %}" alt="Empty cart" width="60" height="60" class="mb-3">
+                            <h4 class="mb-3">Ваша корзина пуста</h4>
+                            <p class="text-muted">Добавьте товары, чтобы продолжить</p>
+                            <a href="{% url 'catalog:index' %}" class="btn btn-dark mt-2">
+                                Перейти в каталог
+                            </a>
+                        </div>
+                    {% endif %}
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+
+{% comment %} <!-- Разметка модального окна корзины -->
+<div class="modal fade" id="cartModal" tabindex="-1" aria-labelledby="cartModalLabel" aria-hidden="true" style="background-color: rgba(0,0,0,0.0);">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-dark text-white">
+                <h5 class="modal-title" id="cartModalLabel">
+                    <img class="me-2" src="{% static "deps/icons/basket2-fill.svg" %}" alt="Cart Icon" width="24" height="24">
+                    Ваша корзина
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="container" id="cart-items-container">
+                    {% if carts %}
+                        {% include "carts/includes/included_cart.html" %}
+                    {% else %}
+                        <div class="text-center py-4">
+                            <img src="{% static 'deps/icons/cart-x.svg' %}" alt="Empty cart" width="60" height="60" class="mb-3">
+                            <h4 class="mb-3">Ваша корзина пуста</h4>
+                            <p class="text-muted">Добавьте товары, чтобы продолжить</p>
+                            <a href="{% url 'catalog:index' %}" class="btn btn-dark mt-2">
+                                Перейти в каталог
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% if carts %}
+            <div class="modal-footer d-flex flex-column">
+                <div class="w-100 d-flex gap-2">
+                    <button type="button" class="btn btn-outline-secondary flex-grow-1" data-bs-dismiss="modal">
+                        Продолжить покупки
+                    </button>
+                    <a href="{% url 'orders:create_order' %}" class="btn btn-dark flex-grow-1">
+                        Оформить заказ
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div> {% endcomment %}
+
