@@ -18,44 +18,53 @@ from users.models import User
 from .forms import PasswordResetRequestForm, SetNewPasswordForm
 
 def login(request):
-    if request.method  == 'POST':
-        form=UserLoginForm(data=request.POST)
+    if request.method == 'POST':
+        form = UserLoginForm(data=request.POST)
         if form.is_valid():
-            username=request.POST['username']
-            password=request.POST['password']
-            user=auth.authenticate(username=username,password=password)
-
-            session_key=request.session.session_key
-
+            username = request.POST['username']
+            password = request.POST['password']
+            
+            # Сохраняем session_key ДО аутентификации
+            old_session_key = request.session.session_key
+            
+            user = auth.authenticate(username=username, password=password)
+            
             if user:
-                auth.login(request,user)
+                auth.login(request, user)
                 messages.success(request, f"{username}, Вы вошли в аккаунт")
 
-                if session_key:
-                    Cart.odject.filter(session_key=session_key).update(user=user)
-
-                redirect_page=request.POST.get('next',None)
-                if redirect_page and redirect_page != reverse('user:logout'):
-                    return HttpResponseRedirect(request.POST.get('next'))
-
+                # Переносим корзину из старой сессии в аккаунт
+                if old_session_key:
+                    Cart.objects.filter(session_key=old_session_key).update(user=user)
+                
+                # Перенаправляем пользователя
+                redirect_page = request.POST.get('next', None)
+                if redirect_page and redirect_page != reverse('users:logout'):
+                    return HttpResponseRedirect(redirect_page)
+                
                 return HttpResponseRedirect(reverse('main:index'))
     else:
-        form=UserLoginForm()
-        
-    context = {
-        'title': 'ЕМЕХ-авто - Авторизация',
-        'form': form
-    }
+        form = UserLoginForm()
+    
+    context = {'title': 'Авторизация', 'form': form}
     return render(request, 'users/login.html', context)
 
 def registration(request):
     if request.method == 'POST':
         form = UserRegistrationForm(data=request.POST)
         if form.is_valid():
+            # Сохраняем session_key ДО создания пользователя
+            old_session_key = request.session.session_key
+            
             user = form.save(commit=False)
             user.is_active = False
             user.save()
             
+            # Переносим корзину из старой сессии в аккаунт
+            if old_session_key:
+                Cart.objects.filter(session_key=old_session_key).update(user=user)
+            
+            # Отправка письма подтверждения (остаётся без изменений)
             token = user.generate_verification_token()
             verification_url = request.build_absolute_uri(
                 reverse('users:verify_email', kwargs={'token': token})
