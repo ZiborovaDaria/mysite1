@@ -1,12 +1,18 @@
 from django.core.paginator import Paginator
-from django.shortcuts import get_list_or_404, get_object_or_404, render
+from django.http import Http404
+from django.shortcuts import get_list_or_404, get_object_or_404, redirect, render
 from django.template import context
+
+from django.db.models import Q
+from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank
+from django.urls import reverse
 
 from goods.models import Categories, Country, Manufacturer, Products, SubCategories
 from goods.utils import q_search
 
 def catalog(request, category_slug=None, subcategory_slug=None):
     goods = Products.objects.all()
+    query = request.GET.get('q', '').strip()
     
     # Получаем все категории для фильтра
     categories = Categories.objects.all()
@@ -20,12 +26,30 @@ def catalog(request, category_slug=None, subcategory_slug=None):
         subcategory = get_object_or_404(SubCategories, slug=subcategory_slug)
         goods = goods.filter(subcategory=subcategory)
         category = subcategory.category
-        category_slug = category.slug
-    # Фильтрация по категории
-    elif category_slug and category_slug != 'all':
-        category = get_object_or_404(Categories, slug=category_slug)
-        goods = goods.filter(category=category)
     
+    # Фильтрация по категории
+    elif category_slug:
+        if category_slug == 'all':
+            # Явный запрос на показ всех товаров
+            pass
+        else:
+            category = get_object_or_404(Categories, slug=category_slug)
+            goods = goods.filter(category=category)
+    
+    # Поиск (если есть запрос)
+    if query:
+        goods = q_search(query)
+    
+    # Если нет ни категории, ни подкатегории, ни поиска - показываем все товары
+    if not category_slug and not subcategory_slug and not query:
+        # Можно добавить здесь логику для главной страницы каталога
+        pass
+    
+    # Если запрошена несуществующая категория без поиска
+    if not goods.exists() and not query:
+        raise Http404("Категория не найдена")
+
+
     # Фильтры
     if request.GET.get('on_sale') == 'on':
         goods = goods.filter(discount__gt=0)
@@ -65,6 +89,7 @@ def catalog(request, category_slug=None, subcategory_slug=None):
         'subcategory': subcategory,
         'category_slug': category_slug,
         'subcategory_slug': subcategory_slug,
+        'query': query,
     }
     
     return render(request, 'goods/catalog.html', context)

@@ -92,18 +92,20 @@ class CreateOrderForm(forms.Form):
         
         return phone_number
 
-    def clean_delivery_address(self):
-        requires_delivery = self.cleaned_data.get('requires_delivery')
-        delivery_address = self.cleaned_data.get('delivery_address')
-        
-        if requires_delivery == "1" and not delivery_address:
-            raise forms.ValidationError(
-                "Пожалуйста, укажите адрес доставки",
-                code='delivery_address_required'
-            )
-        
-        return delivery_address
 
+    def clean(self):
+        cleaned_data = super().clean()
+        requires_delivery = cleaned_data.get('requires_delivery')
+        delivery_address = cleaned_data.get('delivery_address')
+        pickup_store = cleaned_data.get('pickup_store')
+
+        if requires_delivery == "1" and not delivery_address:
+            self.add_error('delivery_address', "Пожалуйста, укажите адрес доставки")
+        
+        if requires_delivery == "0" and not pickup_store:
+            self.add_error(None, "Пожалуйста, выберите магазин для самовывоза")
+        
+        return cleaned_data
 
 
    

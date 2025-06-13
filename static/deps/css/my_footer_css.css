@@ -127,47 +127,74 @@ footer .bi {
     font-size: 1.5rem;
 }
 
-/* Фиксированный телеграм-бот */
+/* Фиксированный телеграм-бот - улучшенный стиль */
 .telegram-fixed {
     position: fixed;
-    bottom: 30px;
-    right: 30px;
+    bottom: 50px; /* Подняли выше */
+    right: 25px;  /* Ближе к краю */
     z-index: 1000;
+    filter: drop-shadow(0 2px 6px rgba(0,0,0,0.25)); /* Более мягкая тень */
 }
+
 .telegram-btn {
     background-color: #0088cc;
     color: white;
-    width: 60px;
-    height: 60px;
+    width: 56px;  /* Чуть меньше для аккуратности */
+    height: 56px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 30px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-    transition: all 0.3s;
+    font-size: 28px; /* Чуть меньше размер иконки */
+    box-shadow: 0 3px 6px rgba(0,0,0,0.16);
+    transition: all 0.2s ease-out;
+    position: relative;
+    border: 2px solid white; /* Белая обводка для контраста */
 }
+
 .telegram-btn:hover {
     background-color: #0077b3;
-    transform: scale(1.1);
-    color: white;
+    transform: translateY(-3px) scale(1.05); /* Поднимаем при наведении */
+    box-shadow: 0 5px 12px rgba(0,0,0,0.2);
 }
+
 .telegram-tooltip {
     position: absolute;
-    right: 70px;
+    right: 65px;
     top: 50%;
     transform: translateY(-50%);
-    background: #333;
+    background: rgba(51, 51, 51, 0.9);
     color: white;
-    padding: 5px 10px;
-    border-radius: 5px;
+    padding: 8px 12px;
+    border-radius: 6px;
     white-space: nowrap;
     opacity: 0;
-    transition: opacity 0.3s;
+    transition: opacity 0.2s ease-out, transform 0.2s ease-out;
     pointer-events: none;
+    font-size: 14px;
+    font-family: Arial, sans-serif;
+    min-width: 220px;
+    text-align: center;
 }
+
 .telegram-btn:hover .telegram-tooltip {
     opacity: 1;
+    transform: translateY(-50%) translateX(0);
+}
+
+/* Анимация пульсации для привлечения внимания */
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+.telegram-btn {
+    animation: pulse 2.5s infinite;
+}
+
+.telegram-btn:hover {
+    animation: none; /* Отключаем пульсацию при наведении */
 }
 
 /* Стили для карусели акций */

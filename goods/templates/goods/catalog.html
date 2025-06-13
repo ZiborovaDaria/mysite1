@@ -124,13 +124,7 @@
     
     <!-- Блок товаров (col-lg-9) -->
     <div class="col-lg-9">
-        {% if request.GET.q %}
-            <h4 class="mb-4">Результаты поиска: "{{ request.GET.q }}"</h4>
-            {% if not goods %}
-                <div class="alert alert-info">По вашему запросу ничего не найдено</div>
-            {% endif %}
-        {% endif %}
-        
+
         <!-- Хлебные крошки -->
         <nav aria-label="breadcrumb" class="mb-4">
             <ol class="breadcrumb">
@@ -149,8 +143,20 @@
             </ol>
         </nav>
         
+        {% comment %} {% if request.GET.q %}
+            <h4 class="mb-4">Результаты поиска: "{{ request.GET.q }}"</h4>
+            {% if not goods %}
+                <div class="alert alert-info">По вашему запросу ничего не найдено</div>
+            {% endif %}
+        {% endif %} {% endcomment %}
+
         <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-            {% for product in goods %}
+            {% if request.path == '/search/' and not goods %}
+                <div class="col-12">
+                    <div class="alert alert-info">По вашему запросу "{{ request.GET.q }}" ничего не найдено</div>
+                </div>
+            {% else %}
+                {% for product in goods %}
                 <!-- Карточка товара -->
                 <div class="col">
                     <div class="card h-100 border-0 shadow-sm">
@@ -189,7 +195,8 @@
                         </div>
                     </div>
                 </div>
-            {% endfor %}
+                {% endfor %}
+            {% endif %}
         </div>
         
         <!-- Пагинация -->

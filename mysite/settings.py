@@ -175,4 +175,5 @@ SERVER_EMAIL = 'd.v.ziborova@yandex.ru'
 
 # Telegram
 TELEGRAM_BOT_TOKEN = "7042570168:AAHxnGmR1YIyaYglS6yCB__j8FbdYtrtoYs"
-TELEGRAM_OPERATOR_CHAT_ID = "dvziborova"  # Чат ID оператора
+TELEGRAM_OPERATOR_CHAT_ID = "1084877909"  # Чат ID оператора
+ADMIN_IDS="1084877909" 

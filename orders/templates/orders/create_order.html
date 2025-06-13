@@ -2,13 +2,48 @@
 {% load static %}
 {% load carts_tags %}
 
+{% block css %}
+<link rel="stylesheet" href="{% static "deps/css/my_footer_css.css" %}">
+<style>
+.alert-danger {
+    background-color: #f8d7da;
+    border-color: #f5c2c7;
+    color: #842029;
+    border-radius: 6px;
+    padding: 15px;
+    margin-bottom: 20px;
+}
+
+.alert-success {
+    background-color: #d1e7dd;
+    border-color: #badbcc;
+    color: #0f5132;
+    border-radius: 6px;
+    padding: 15px;
+    margin-bottom: 20px;
+}
+</style>
+{% endblock css %}
+
 {% block content %}
 {% user_carts request as carts %}
 <!-- Детали заказа -->
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-lg-15">
-            <div class="card border-0 shadow-sm">
+            <!-- Добавьте этот блок для отображения сообщений -->
+                {% if messages %}
+                <div class="mb-4">
+                    {% for message in messages %}
+                    <div class="alert alert-{% if message.tags %}{{ message.tags }}{% else %}info{% endif %} alert-dismissible fade show">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                
+                <div class="card border-0 shadow-sm">
                     <div class="card-header bg-dark text-white">
                         <h3 class="mb-0">Детали заказа</h3>
                     </div>
@@ -129,6 +164,7 @@
                                             <div class="stores-list">
                                                 {% for store in stores %}
                                                 <div class="card mb-2 store-card {% if store.is_main %}border-primary{% endif %}" 
+                                                    data-store-id="{{ store.id }}"
                                                     data-lat="{{ store.latitude }}" 
                                                     data-lng="{{ store.longitude }}"
                                                     onclick="selectStore(this)">
@@ -144,6 +180,7 @@
                                                 </div>
                                                 {% endfor %}
                                             </div>
+                                            <input type="hidden" id="id_pickup_store" name="pickup_store" value="">
                                         </div>
                                     </div>
 
@@ -196,7 +233,7 @@
                                                 </thead>
                                                 <tbody>
                                                     {% for cart in carts %}
-                                                    <tr>
+                                                    <tr data-available="{{ cart.product.quantity }}">
                                                         <td>{{ cart.product.name }}</td>
                                                         <td class="text-end">{{ cart.quantity }} шт.</td>
                                                         <td class="text-end">{{ cart.products_price }} ₽</td>
@@ -237,17 +274,50 @@
     </div>
 </div>
 
-<script src="https://api-maps.yandex.ru/2.1/?apikey=ВАШ_API_KEY&lang=ru_RU" type="text/javascript"></script>
+<script src="https://api-maps.yandex.ru/2.1/?apikey=48b8c233-8399-462a-a05d-4ff9a1bfa51a&lang=ru_RU" type="text/javascript"></script>
 <script>
+// Глобальные переменные для карты и меток
+let map;
+let placemarks = [];
+let userCity = '{{ user.city|default:"Москва" }}'; // Получаем город пользователя из контекста
 
 // Инициализация карты магазинов
 function initMap() {
     if (typeof ymaps !== 'undefined') {
         ymaps.ready(function() {
+            // Определяем центр карты по городу пользователя
+            let defaultCenter, defaultZoom;
+            switch(userCity) {
+                case 'Москва':
+                    defaultCenter = [55.7558, 37.6176];
+                    defaultZoom = 11;
+                    break;
+                case 'Санкт-Петербург':
+                    defaultCenter = [59.9343, 30.3351];
+                    defaultZoom = 11;
+                    break;
+                case 'Екатеринбург':
+                    defaultCenter = [56.8389, 60.6057];
+                    defaultZoom = 12;
+                    break;
+                case 'Казань':
+                    defaultCenter = [55.7963, 49.1088];
+                    defaultZoom = 12;
+                    break;
+                case 'Нижний Новгород':
+                    defaultCenter = [56.3269, 44.0059];
+                    defaultZoom = 12;
+                    break;
+                default:
+                    defaultCenter = [55.7558, 37.6176]; // Москва по умолчанию
+                    defaultZoom = 10;
+            }
+
             // Создаем карту
-            const map = new ymaps.Map("map", {
-                center: [55.76, 37.64], // Центр по умолчанию (Москва)
-                zoom: 10
+            map = new ymaps.Map("map", {
+                center: defaultCenter,
+                zoom: defaultZoom,
+                controls: ['zoomControl']
             });
 
             // Добавляем метки магазинов из Django-шаблона
@@ -255,6 +325,7 @@ function initMap() {
             storeCards.forEach(card => {
                 const lat = parseFloat(card.dataset.lat);
                 const lng = parseFloat(card.dataset.lng);
+                const storeId = card.dataset.storeId;
                 const title = card.querySelector('.card-title').textContent;
                 const address = card.querySelector('.card-text').textContent;
                 
@@ -262,14 +333,26 @@ function initMap() {
                     hintContent: title,
                     balloonContent: address
                 }, {
-                    preset: 'islands#blueShoppingIcon'
+                    preset: 'islands#blueShoppingIcon',
+                    storeId: storeId // Сохраняем ID магазина в метке
+                });
+                
+                // Обработчик клика по метке
+                placemark.events.add('click', function() {
+                    const card = document.querySelector(`.store-card[data-store-id="${storeId}"]`);
+                    if (card) {
+                        selectStore(card);
+                        scrollToStoreCard(card);
+                    }
                 });
                 
                 map.geoObjects.add(placemark);
+                placemarks.push(placemark);
                 
                 // Если это главный магазин, центрируем на нем
                 if (card.classList.contains('border-primary')) {
                     map.setCenter([lat, lng], 15);
+                    document.getElementById('id_pickup_store').value = storeId;
                 }
             });
 
@@ -283,25 +366,38 @@ function initMap() {
     }
 }
 
+// Прокрутка к выбранной карточке магазина
+function scrollToStoreCard(cardElement) {
+    cardElement.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center'
+    });
+}
+
 // Выбор магазина для самовывоза
 function selectStore(element) {
+    // Снимаем выделение со всех карточек
     document.querySelectorAll('.store-card').forEach(card => {
-        card.classList.remove('border-primary');
+        card.classList.remove('border-primary', 'bg-light');
     });
-    element.classList.add('border-primary');
-    updateDeliverySummary();
+    
+    // Выделяем выбранную карточку
+    element.classList.add('border-primary', 'bg-light');
+    const storeId = element.dataset.storeId;
+    document.getElementById('id_pickup_store').value = storeId;
     
     // Центрируем карту на выбранном магазине
-    if (typeof ymaps !== 'undefined') {
-        const lat = parseFloat(element.dataset.lat);
-        const lng = parseFloat(element.dataset.lng);
-        ymaps.ready(() => {
-            const map = document.getElementById('map')?.map;
-            if (map) {
-                map.setCenter([lat, lng], 15);
-            }
-        });
+    if (map && storeId) {
+        const placemark = placemarks.find(p => p.options.get('storeId') == storeId);
+        if (placemark) {
+            map.setCenter(placemark.geometry.getCoordinates(), 15);
+            
+            // Открываем балун с информацией
+            placemark.balloon.open();
+        }
     }
+    
+    updateDeliverySummary();
 }
 
 // Обновление информации о доставке в итоговой вкладке
@@ -382,6 +478,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 deliveryAddressGroup.style.display = 'none';
                 pickupLocations.style.display = 'block';
                 deliveryAddress.required = false;
+                
+                // Если карта еще не инициализирована, инициализируем ее
+                if (typeof map === 'undefined') {
+                    initMap();
+                }
             }
             
             updateDeliverySummary();
@@ -456,7 +557,40 @@ document.addEventListener('DOMContentLoaded', function() {
     if (mainStore) {
         selectStore(mainStore);
     }
+    
+    // Обработчик клика по карточке магазина
+    document.querySelectorAll('.store-card').forEach(card => {
+        card.addEventListener('click', function() {
+            selectStore(this);
+        });
+    });
 });
 
+
+document.getElementById('order-form').addEventListener('submit', function(e) {
+    // Проверка наличия товаров
+    const cartItems = document.querySelectorAll('tbody tr');
+    let errorMessage = '';
+    
+    cartItems.forEach(item => {
+        const productName = item.querySelector('td:first-child').textContent.trim();
+        const quantity = parseInt(item.querySelector('td:nth-child(2)').textContent);
+        const available = parseInt(item.dataset.available || 9999); // Можно добавить data-available атрибут
+        
+        if (quantity > available) {
+            errorMessage += `Недостаточно товара "${productName}". В наличии: ${available}\n`;
+        }
+    });
+    
+    if (errorMessage) {
+        e.preventDefault();
+        //alert('Проблемы с заказом:\n' + errorMessage);
+        // Можно также отобразить ошибки более красиво
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'alert alert-danger';
+        errorDiv.innerHTML = errorMessage.replace(/\n/g, '<br>');
+        document.querySelector('.order-summary').prepend(errorDiv);
+    }
+});
 </script>
 {% endblock content %}

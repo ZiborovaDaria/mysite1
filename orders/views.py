@@ -6,11 +6,13 @@ from django.shortcuts import redirect, render
 
 from carts.models import Cart
 
+from main.models import Store
 from orders.forms import CreateOrderForm
 from orders.models import Order, OrderItem
 
 @login_required
 def create_order(request):
+    stores = Store.objects.all()
     if request.method == 'POST':
         form = CreateOrderForm(data=request.POST)
         if form.is_valid():
@@ -28,17 +30,20 @@ def create_order(request):
                             delivery_address=form.cleaned_data['delivery_address'],
                             payment_on_get=form.cleaned_data['payment_on_get'],
                         )
+                        
                         # Создать заказанные товары
                         for cart_item in cart_items:
-                            product=cart_item.product
-                            name=cart_item.product.name
-                            price=cart_item.product.sell_price()
-                            quantity=cart_item.quantity
-
+                            product = cart_item.product
+                            name = cart_item.product.name
+                            price = cart_item.product.sell_price()
+                            quantity = cart_item.quantity
 
                             if product.quantity < quantity:
-                                raise ValidationError(f'Недостаточное количество товара {name} на складе\
-                                                       В наличии - {product.quantity}')
+                                raise ValidationError(
+                                    f'Недостаточное количество товара "{name}" на складе. '
+                                    f'В наличии: {product.quantity}, запрошено: {quantity}. '
+                                    'Пожалуйста, уменьшите количество или удалите товар из корзины.'
+                                )
 
                             OrderItem.objects.create(
                                 order=order,
@@ -53,22 +58,23 @@ def create_order(request):
                         # Очистить корзину пользователя после создания заказа
                         cart_items.delete()
 
-                        messages.success(request, 'Заказ оформлен!')
+                        messages.success(request, 'Заказ успешно оформлен!')
                         return redirect('user:profile')
+                        
             except ValidationError as e:
-                messages.success(request, str(e))
+                messages.error(request, str(e))  # Используем error вместо success для важных уведомлений
                 return redirect('orders:create_order')
     else:
         initial = {
             'first_name': request.user.first_name,
             'last_name': request.user.last_name,
-            }
-
+        }
         form = CreateOrderForm(initial=initial)
 
     context = {
-        'title': 'Home - Оформление заказа',
+        'title': 'Оформление заказа',
         'form': form,
+        'stores': stores,
         'order': True,
     }
     return render(request, 'orders/create_order.html', context=context)
